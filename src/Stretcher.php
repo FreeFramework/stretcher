@@ -22,24 +22,19 @@ class Stretcher
         // Default resolver
         $this->resolver = $resolver ? $resolver : function ($callable)
         {
-            // If PHP callable
-            if (is_callable($callable))
-                return $callable;
-
             // If custom callable
             if (is_string($callable) AND
                 substr($callable, 0, 1) == '@' AND
-                $callable = substr($callable, 1) AND
-                $cc = explode(':', $callable))
+                $str = substr($callable, 1) AND
+                $cc = explode(':', $str))
                 // @Middleware
                 if (count($cc) == 1)
                     return [new $cc[0], '__invoke'];
                 // @Controller:action
                 elseif (count($cc) == 2)
                     return [new $cc[0], $cc[1]];
-
-            // Else throw exception
-            throw new Exception('Invalid callable argument(');
+            // Else change nothing
+            return $callable;
         };
     }
 
@@ -94,6 +89,9 @@ class Stretcher
 
         $callable = $this->resolve($this->queue->dequeue());
 
-        return call_user_func($callable, $request, $response, $this);
+        if (is_callable($callable))
+            return call_user_func($callable, $request, $response, $this);
+        else
+            throw new \UnexpectedValueException();
     }
 }
