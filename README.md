@@ -6,6 +6,8 @@
 
 PSR-7 stretchable middleware dispatcher
 
+![](https://i.imgsafe.org/6459ebd.png)
+
 ## Installation
 
 Install using composer:
