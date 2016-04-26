@@ -81,7 +81,7 @@ class Stretcher
      */
     public function __invoke(Request $request, Response $response, ...$callables)
     {
-        foreach ($callables as $callable)
+        while ($callable = array_pop($callables))
             $this->queue->unshift($callable);
 
         if ($this->queue->isEmpty())
