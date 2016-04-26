@@ -7,9 +7,10 @@
         "psr/http-message-implementation": "*"
     },
     "require-dev": {
+        "zendframework/zend-diactoros": "*",
         "phpunit/phpunit": "*",
-        "phpdocumentor/phpdocumentor": "2.*",
-        "zendframework/zend-diactoros": "*"
+        "squizlabs/php_codesniffer": "*",
+        "phpdocumentor/phpdocumentor": "dev-master"
     },
     "autoload": {
         "classmap": [
