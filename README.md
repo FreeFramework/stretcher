@@ -1,70 +1,155 @@
-# Routing - PHP Library
+# Stretcher - PHP Library
 
-[![](https://img.shields.io/packagist/v/assouan/routing.svg)](https://packagist.org/packages/assouan/routing)
-[![](https://img.shields.io/packagist/dt/assouan/routing.svg)](https://packagist.org/packages/assouan/routing)
-[![](https://img.shields.io/packagist/l/assouan/routing.svg)](https://packagist.org/packages/assouan/routing)
+[![](https://img.shields.io/packagist/v/assouan/stretcher.svg)](https://packagist.org/packages/assouan/stretcher)
+[![](https://img.shields.io/packagist/dt/assouan/stretcher.svg)](https://packagist.org/packages/assouan/stretcher)
+[![](https://img.shields.io/packagist/l/assouan/stretcher.svg)](https://packagist.org/packages/assouan/stretcher)
 
-Router class for PSR-7 http
+PSR-7 stretchable middleware dispatcher
 
 ## Installation
 
 Install using composer:
 
 ```bash
-$ composer require assouan/routing
+$ composer require assouan/stretcher
 ```
 
 ## Usage
 
+Stretcher:
+
 ```php
-$router = new Routing\Router();
+<?php
 
-$router->map($regex1, $callable1);
-$router->map($regex2, $callable2);
-$router->map($regex3, $callable3);
+$app = new Stretcher();
+//   = new Stretcher($resolver);
 
-$response = $router->match($request);
+$app->add($callable1);
+$app->add($callable2);
+$app->add($callable3);
 
-echo $reponse;
+$response = $app->dispatch($request, $response);
+```
+
+Add middlewares in the queue priority in runetime:
+
+```php
+<?php
+
+function middleware($request, $response, $next)
+{
+    // Write response header
+    ...
+
+    // Call middleware 'render_html_nav' and 'MyBlog::lastNews' in priority and continue next
+    $response = $next($request, $response, 'render_html_nav', 'MyBlog::lastNews')
+
+    // Write response footer
+    ...
+
+    return $response;
+}
+```
+
+Default resolver:
+
+```php
+<?php
+
+// Middleware = class name
+$app->add('@Middleware');
+
+// Controller = class name
+// action = method name
+$app->add('@Controller:action');
+```
+
+Write a middleware:
+
+```php
+<?php
+
+class MyMiddleware
+{
+    public function __invoke($request, $response, $next)
+    {
+        return $response;
+    }
+}
+```
+
+Write a controller:
+
+```php
+<?php
+
+class MyController
+{
+    public function myActionA()
+    {
+        return new Response;
+    }
+
+    public function myActionB($request)
+    {
+        return new Response;
+    }
+
+    public function myActionC($request, $response, $next)
+    {
+        return new Response;
+    }
+}
 ```
 
 ## Example
 
+Bootstrap file:
+
 ```php
-$router = new Routing\Router();
+<?php
 
-$router->map('/', 'sample_func');
-$router->map('/special', 'SampleController::special')->setOption('method', 'post')->setOption('scheme', 'https');
-$router->map('/hello/(?<name>\w+)', 'SampleController::hello');
+$app = new Stretcher();
 
-$response = $router->match($request); // $request = Psr\Http\Message\ServerRequestInterface
+$app->add(IsHttpsMiddleware::class);
+$app->add('@AppKernelMiddleware'); // middleware callable on default resolver
+$app->add([$router, 'run']);
+$app->add('display_error_404');
 
-echo $response;
+$response = $app->dispatch($request, $response);
+
+echo $response->getBody();
 ```
 
-```php
-function sample_func()
-{
-    return 'Hello world!';
-}
-```
+Routing file:
 
 ```php
-class SampleController
+<?php
+
+$router = new Router();
+
+$router->map('/', '@HomeMiddleware');
+$router->map('/blog', '@BlogMiddleware:showNews');
+$router->map('/blog/edit', '@BlogMiddleware:addNews');
+```
+
+BlogMiddleware file:
+
+```php
+<?php
+
+class BlogMiddleware
 {
-    public function special()
+    public function showNews($request)
     {
-        return 'Page only in HTTPS POST';
+        ...
+
+        return $response;
     }
 
-    public static function hello($request, $name)
+    public function addNews($request, $response, $next)
     {
-        // with function parameter
-        $username = $name;
-        // with request attribute
-        $username = $request->getAttribute('name');
-
-        return 'Hello '.$username;
+        return $next($request, $response, '@BlogEdit:hasAccess', '@BlogEdit:adminNav', '@BlogEdit:adminEditor');
     }
 }
 ```
