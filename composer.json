@@ -1,0 +1,17 @@
+{
+    "name": "assouan/stretcher",
+    "type": "library",
+    "require": {
+        "php": "^7.0",
+        "psr/http-message": "*",
+        "psr/http-message-implementation": "*"
+    },
+    "require-dev": {
+        "zendframework/zend-diactoros": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/Stretcher.php"
+        ]
+    }
+}
