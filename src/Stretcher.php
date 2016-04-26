@@ -26,7 +26,7 @@ class Stretcher
             if (is_string($callable) AND
                 substr($callable, 0, 1) == '@' AND
                 $str = substr($callable, 1) AND
-                $cc = explode(':', $str))
+                $cc = explode('.', $str))
                 // @Middleware
                 if (count($cc) == 1)
                     return [new $cc[0], '__invoke'];

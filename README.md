@@ -65,7 +65,7 @@ $app->add('@Middleware');
 
 // Controller = class name
 // action = method name
-$app->add('@Controller:action');
+$app->add('@Controller.action');
 ```
 
 Write a middleware:
@@ -133,8 +133,8 @@ Routing file:
 $router = new Router();
 
 $router->map('/', '@HomeMiddleware');
-$router->map('/blog', '@BlogMiddleware:showNews');
-$router->map('/blog/edit', '@BlogMiddleware:addNews');
+$router->map('/blog', '@BlogMiddleware.showNews');
+$router->map('/blog/edit', '@BlogMiddleware.addNews');
 ```
 
 BlogMiddleware file:
@@ -153,7 +153,7 @@ class BlogMiddleware
 
     public function addNews($request, $response, $next)
     {
-        return $next($request, $response, '@BlogEdit:hasAccess', '@BlogEdit:adminNav', '@BlogEdit:adminEditor');
+        return $next($request, $response, '@BlogEdit.hasAccess', '@BlogEdit.adminNav', '@BlogEdit.adminEditor');
     }
 }
 ```
