@@ -94,4 +94,15 @@ class Stretcher
         else
             throw new \UnexpectedValueException();
     }
+
+    /**
+     * Alias simplified of __invoke()
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
+    public function dispatch(Request $request, Response $response)
+    {
+        return $this($request, $response);
+    }
 }
