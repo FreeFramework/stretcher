@@ -60,7 +60,7 @@ class Stretcher
      * @param callable $callable
      * @return callable
      */
-    protected function resolve($callable) : callable
+    protected function resolve($callable)// : callable
     {
         return ($resolver = $this->resolver) ? $resolver($callable) : $callable;
     }
