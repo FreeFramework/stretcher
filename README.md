@@ -6,8 +6,6 @@
 
 PSR-7 stretchable middleware dispatcher
 
-![](https://i.imgsafe.org/6459ebd.png)
-
 ## Installation
 
 Install using composer:
@@ -15,6 +13,10 @@ Install using composer:
 ```bash
 $ composer require assouan/stretcher
 ```
+
+## Introduction
+
+![](https://i.imgsafe.org/6459ebd.png)
 
 ## Usage
 
